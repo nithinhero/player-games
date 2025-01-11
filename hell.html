@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Quiz Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: lightblue;
+            padding-top: 50px;
+        }
+        h1 {
+            color: darkblue;
+        }
+        #question {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        #message {
+            color: red;
+            font-size: 20px;
+            margin-top: 10px;
+        }
+        input, button {
+            padding: 10px;
+            font-size: 18px;
+        }
+        #score {
+            font-size: 24px;
+            color: darkgreen;
+            margin-top: 20px;
+        }
+    </style>
+    <script>
+        let score = 0;
+        let questionCount = 0;
+        const maxQuestions = 5;
+        let correctAnswer = 0;
+
+        function askQuestion() {
+            if (questionCount < maxQuestions) {
+                const num1 = Math.floor(Math.random() * 50) + 1;
+                const num2 = Math.floor(Math.random() * 50) + 1;
+                const operations = ['+', '-', '*', '/'];
+                const operation = operations[Math.floor(Math.random() * operations.length)];
+
+                let questionText = "";
+                
+                if (operation === '+') {
+                    correctAnswer = num1 + num2;
+                    questionText = `What is ${num1} + ${num2}?`;
+                } else if (operation === '-') {
+                    correctAnswer = num1 - num2;
+                    questionText = `What is ${num1} - ${num2}?`;
+                } else if (operation === '*') {
+                    correctAnswer = num1 * num2;
+                    questionText = `What is ${num1} * ${num2}?`;
+                } else if (operation === '/') {
+                    if (num2 === 0) num2 = 1;  // Avoid division by zero
+                    correctAnswer = (num1 / num2).toFixed(2);
+                    questionText = `What is ${num1} / ${num2}? (Rounded to 2 decimals)`;
+                }
+
+                document.getElementById('question').innerHTML = questionText;
+                document.getElementById('message').innerHTML = "";
+            } else {
+                document.getElementById('question').innerHTML = "Game Over!";
+                document.getElementById('score').innerHTML = `Final Score: ${score}`;
+                document.getElementById('submit-btn').disabled = true;
+            }
+        }
+
+        function submitAnswer() {
+            const userAnswer = document.getElementById('answer').value;
+
+            if (!isNaN(userAnswer) && userAnswer.trim() !== "") {
+                if (Math.abs(userAnswer - correctAnswer) < 0.01) {
+                    score++;
+                    document.getElementById('message').innerHTML = "Correct!";
+                } else {
+                    document.getElementById('message').innerHTML = "Incorrect! Try again.";
+                }
+
+                questionCount++;
+                document.getElementById('score').innerHTML = `Score: ${score}`;
+                document.getElementById('answer').value = ""; // Clear the input field
+                askQuestion();
+            } else {
+                document.getElementById('message').innerHTML = "Invalid input! Please enter a number.";
+            }
+        }
+
+        window.onload = function() {
+            askQuestion();
+        };
+    </script>
+</head>
+<body>
+    <h1>Math Quiz Game</h1>
+    <div id="question">Loading...</div>
+    <input type="text" id="answer" placeholder="Enter your answer">
+    <button id="submit-btn" onclick="submitAnswer()">Submit</button>
+    <p id="message"></p>
+    <p id="score">Score: 0</p>
+</body>
+</html>

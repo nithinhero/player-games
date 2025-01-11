@@ -1,0 +1,44 @@
+<!--MATHQUIZ-->>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Quiz Game</title>
+    <style>
+        body {
+            background-color: rgb(117, 142, 222);
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        .container {
+            margin-top: 50px;
+        }
+        .question {
+            font-size: 24px;
+            margin: 20px 0;
+        }
+        .score {
+            font-size: 24px;
+            margin: 20px 0;
+        }
+        .message {
+            font-size: 34px;
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Math Quiz Game</h2>
+        <div class="score">Score: <span id="score">0</span></div>
+        <div class="question" id="question">What is 1 + 1?</div>
+        <input type="text" id="answer" placeholder="Enter your answer">
+        <button onclick="submitAnswer()">Submit</button>
+        <div class="message" id="message"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

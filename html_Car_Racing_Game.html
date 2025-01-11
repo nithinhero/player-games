@@ -1,0 +1,84 @@
+<!--CAR RACING GAME-->>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Racing Game</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+        }
+
+        #gameArea {
+            width: 400px;
+            height: 600px;
+            background-color: #444;
+            border: 2px solid black;
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .road {
+            width: 100px;
+            height: 600px;
+            background-color: #555;
+            position: absolute;
+            left: 150px;
+        }
+
+        .line {
+            width: 10px;
+            height: 50px;
+            background-color: rgb(170, 169, 96);
+            position: absolute;
+            left: 195px;
+        }
+
+        .car {
+            width: 50px;
+            height: 100px;
+            background-image: url('car.png'); /* Add your car image here */
+            background-size: cover;
+            position: absolute;
+            bottom: 20px;
+            left: 175px;
+            border-radius: 10px;
+        }
+
+        .obstacle {
+            width: 50px;
+            height: 100px;
+            background-color:purple;
+            position: absolute;
+            top: -100px;
+        }
+
+        #score {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: rgb(196, 182, 113);
+            font-size: 18px;
+        }
+
+        
+    </style>
+</head>
+<body>
+
+    <div id="gameArea">
+        <div id="score">Score: 0</div>
+        <div class="road"></div>
+        <div class="car" id="playerCar"></div>
+    </div>
+
+    <script src="cartacing_script.js"></script>
+
+</body>
+</html>

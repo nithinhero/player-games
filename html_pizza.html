@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dots and Boxes Game</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      text-align: center;
+    }
+    canvas {
+      border: 2px solid black;
+      margin: 20px auto;
+      display: block;
+    }
+    h1 {
+      margin-top: 20px;
+    }
+    #scoreboard {
+      margin: 10px;
+      font-size: 18px;
+    }
+    #scoreboard div {
+      display: inline-block;
+      margin: 0 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Dots and Boxes</h1>
+  <div id="scoreboard">
+    <div id="player1Score">Player 1 (Red): 0</div>
+    <div id="player2Score">Player 2 (Blue): 0</div>
+  </div>
+  <canvas id="gameCanvas" width="400" height="400"></canvas>
+
+  <script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    const gridSize = 4; // 4x4 grid of dots
+    const dotRadius = 5;
+    const gap = 100; // Distance between dots
+    const lines = []; // Array to store drawn lines
+    let playerTurn = 1; // 1 for Player 1, 2 for Player 2
+    let boxes = []; // Array to store completed boxes
+    let player1Score = 0;
+    let player2Score = 0;
+
+    // Initialize the game
+    function initGame() {
+      // Draw the dots
+      for (let row = 0; row < gridSize; row++) {
+        for (let col = 0; col < gridSize; col++) {
+          ctx.beginPath();
+          ctx.arc(col * gap + gap, row * gap + gap, dotRadius, 0, Math.PI * 2);
+          ctx.fillStyle = 'black';
+          ctx.fill();
+          ctx.closePath();
+        }
+      }
+    }
+
+    // Draw line between two dots
+    function drawLine(x1, y1, x2, y2, color) {
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 3;
+      ctx.stroke();
+      ctx.closePath();
+    }
+
+    // Detect if a click is close to a line between two dots
+    function isValidLine(x, y, x1, y1, x2, y2) {
+      const distance = Math.abs((y2 - y1) * x - (x2 - x1) * y + x2 * y1 - y2 * x1) /
+                       Math.sqrt((y2 - y1) ** 2 + (x2 - x1) ** 2);
+      return distance < 10 && !lines.some(line => line.x1 === x1 && line.y1 === y1 && line.x2 === x2 && line.y2 === y2);
+    }
+
+    // Handle user click
+    canvas.addEventListener('click', function(e) {
+      const x = e.offsetX;
+      const y = e.offsetY;
+
+      let foundLine = false;
+
+      // Check horizontal lines
+      for (let row = 0; row < gridSize; row++) {
+        for (let col = 0; col < gridSize - 1; col++) {
+          const x1 = col * gap + gap;
+          const y1 = row * gap + gap;
+          const x2 = (col + 1) * gap + gap;
+          const y2 = row * gap + gap;
+
+          if (isValidLine(x, y, x1, y1, x2, y2)) {
+            foundLine = true;
+            lines.push({ x1, y1, x2, y2, player: playerTurn });
+            drawLine(x1, y1, x2, y2, playerTurn === 1 ? 'red' : 'blue');
+            if (!checkBoxCompletion()) {
+              switchTurn();
+            }
+            break;
+          }
+        }
+      }
+
+      if (foundLine) return;
+
+      // Check vertical lines
+      for (let row = 0; row < gridSize - 1; row++) {
+        for (let col = 0; col < gridSize; col++) {
+          const x1 = col * gap + gap;
+          const y1 = row * gap + gap;
+          const x2 = col * gap + gap;
+          const y2 = (row + 1) * gap + gap;
+
+          if (isValidLine(x, y, x1, y1, x2, y2)) {
+            foundLine = true;
+            lines.push({ x1, y1, x2, y2, player: playerTurn });
+            drawLine(x1, y1, x2, y2, playerTurn === 1 ? 'red' : 'blue');
+            if (!checkBoxCompletion()) {
+              switchTurn();
+            }
+            break;
+          }
+        }
+      }
+    });
+
+    // Switch player turn
+    function switchTurn() {
+      playerTurn = playerTurn === 1 ? 2 : 1;
+    }
+
+    // Check if a box has been completed
+    function checkBoxCompletion() {
+      let completed = false;
+
+      for (let row = 0; row < gridSize - 1; row++) {
+        for (let col = 0; col < gridSize - 1; col++) {
+          const top = lines.some(line => line.x1 === col * gap + gap && line.y1 === row * gap + gap && line.x2 === (col + 1) * gap + gap && line.y2 === row * gap + gap);
+          const bottom = lines.some(line => line.x1 === col * gap + gap && line.y1 === (row + 1) * gap + gap && line.x2 === (col + 1) * gap + gap && line.y2 === (row + 1) * gap + gap);
+          const left = lines.some(line => line.x1 === col * gap + gap && line.y1 === row * gap + gap && line.x2 === col * gap + gap && line.y2 === (row + 1) * gap + gap);
+          const right = lines.some(line => line.x1 === (col + 1) * gap + gap && line.y1 === row * gap + gap && line.x2 === (col + 1) * gap + gap && line.y2 === (row + 1) * gap + gap);
+
+          if (top && bottom && left && right && !boxes.some(box => box.row === row && box.col === col)) {
+            boxes.push({ row, col, player: playerTurn });
+            ctx.fillStyle = playerTurn === 1 ? 'red' : 'blue';
+            ctx.fillRect(col * gap + gap + dotRadius, row * gap + gap + dotRadius, gap - dotRadius * 2, gap - dotRadius * 2);
+            updateScore();
+            completed = true;
+          }
+        }
+      }
+      return completed;
+    }
+
+    // Update player score
+    function updateScore() {
+      if (playerTurn === 1) {
+        player1Score++;
+        document.getElementById('player1Score').textContent = `Player 1 (Red): ${player1Score}`;
+      } else {
+        player2Score++;
+        document.getElementById('player2Score').textContent = `Player 2 (Blue): ${player2Score}`;
+      }
+    }
+
+    // Start the game
+    initGame();
+  </script>
+</body>
+</html>

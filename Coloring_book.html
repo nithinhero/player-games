@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coloring Book</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        #canvas {
+            border: 2px solid black;
+        }
+        .color-picker {
+            margin: 10px;
+            display: flex;
+            gap: 10px;
+        }
+        .color {
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Coloring Book</h1>
+<canvas id="canvas" width="400" height="400"></canvas>
+<div class="color-picker">
+    <div class="color" style="background-color: red;" onclick="setColor('red')"></div>
+    <div class="color" style="background-color: blue;" onclick="setColor('blue')"></div>
+    <div class="color" style="background-color: green;" onclick="setColor('green')"></div>
+    <div class="color" style="background-color: yellow;" onclick="setColor('yellow')"></div>
+</div>
+
+<script>
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+
+    // Draw sample shapes
+    ctx.fillStyle = "lightgray";
+    ctx.fillRect(50, 50, 100, 100);
+    ctx.beginPath();
+    ctx.arc(250, 250, 50, 0, Math.PI * 2, true);
+    ctx.fillStyle = "lightgray";
+    ctx.fill();
+
+    let selectedColor = "black";
+
+    function setColor(color) {
+        selectedColor = color;
+    }
+
+    canvas.addEventListener("click", (event) => {
+        const x = event.offsetX;
+        const y = event.offsetY;
+        ctx.fillStyle = selectedColor;
+        ctx.fillRect(x - 5, y - 5, 10, 10); // Fill small squares where clicked
+    });
+</script>
+
+</body>
+</html>
